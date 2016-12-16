@@ -173,7 +173,7 @@ def innerL(i, oS):
         oS.alphas[i] += oS.labelMat[j]*oS.labelMat[i]*(alphaJold - oS.alphas[j])#update i by the same amount as j
         updateEk(oS, i) #added this for the Ecache                    #the update is in the oppostie direction
         b1 = oS.b - Ei- oS.labelMat[i]*(oS.alphas[i]-alphaIold)*oS.K[i,i] - oS.labelMat[j]*(oS.alphas[j]-alphaJold)*oS.K[i,j]
-        b2 = oS.b - Ej- oS.labelMat[i]*(oS.alphas[i]-alphaIold)*oS.K[i,j]- oS.labelMat[j]*(oS.alphas[j]-alphaJold)*oS.K[j,j]
+        b2 = oS.b - Ej- oS.labelMat[i]*(oS.alphas[i]-alphaIold)*oS.K[i,j] - oS.labelMat[j]*(oS.alphas[j]-alphaJold)*oS.K[j,j]
         if (0 < oS.alphas[i]) and (oS.C > oS.alphas[i]): oS.b = b1
         elif (0 < oS.alphas[j]) and (oS.C > oS.alphas[j]): oS.b = b2
         else: oS.b = (b1 + b2)/2.0
@@ -193,6 +193,12 @@ def smoP(dataMatIn, classLabels, C, toler, maxIter,kTup=('lin', 0)):    #full Pl
             iter += 1
         else:#go over non-bound (railed) alphas
             nonBoundIs = nonzero((oS.alphas.A > 0) * (oS.alphas.A < C))[0]
+            logging.info(oS.alphas.A)
+            logging.info(oS.alphas.A > 0)
+            logging.info(oS.alphas.A < C)
+            logging.info("(oS.alphas.A > 0) * (oS.alphas.A < C):%s" % ((oS.alphas.A > 0) * (oS.alphas.A < C)))
+            logging.info(nonzero((oS.alphas.A > 0) * (oS.alphas.A < C)))
+            logging.info("nonBoundIs:%s" % nonBoundIs)
             for i in nonBoundIs:
                 alphaPairsChanged += innerL(i,oS)
                 print "non-bound, iter: %d i:%d, pairs changed %d" % (iter,i,alphaPairsChanged)
@@ -212,6 +218,8 @@ def calcWs(alphas,dataArr,classLabels):
 
 def testRbf(k1=1.3):
     dataArr,labelArr = loadDataSet('testSetRBF.txt')
+    logging.info(dataArr)
+    logging.info(labelArr)
     b,alphas = smoP(dataArr, labelArr, 200, 0.0001, 10000, ('rbf', k1)) #C=200 important
     datMat=mat(dataArr); labelMat = mat(labelArr).transpose()
     svInd=nonzero(alphas.A>0)[0]
@@ -224,7 +232,7 @@ def testRbf(k1=1.3):
         kernelEval = kernelTrans(sVs,datMat[i,:],('rbf', k1))
         predict=kernelEval.T * multiply(labelSV,alphas[svInd]) + b
         if sign(predict)!=sign(labelArr[i]): errorCount += 1
-    print "the training error rate is: %f" % (float(errorCount)/m)
+    print "the training error rate is: %f%%" % (100*float(errorCount)/m)
     dataArr,labelArr = loadDataSet('testSetRBF2.txt')
     errorCount = 0
     datMat=mat(dataArr); labelMat = mat(labelArr).transpose()
@@ -233,7 +241,7 @@ def testRbf(k1=1.3):
         kernelEval = kernelTrans(sVs,datMat[i,:],('rbf', k1))
         predict=kernelEval.T * multiply(labelSV,alphas[svInd]) + b
         if sign(predict)!=sign(labelArr[i]): errorCount += 1    
-    print "the test error rate is: %f" % (float(errorCount)/m)    
+    print "the test error rate is: %f%%" % (100*float(errorCount)/m)    
     
 def img2vector(filename):
     returnVect = zeros((1,1024))
@@ -384,28 +392,45 @@ def main():
                     filename='./test.log',  
                     filemode='w')  
     
-    dataArr, labelArr = loadDataSet('testSet.txt')
+    # dataArr, labelArr = loadDataSet('testSet.txt')
     # logging.info("dataArr:%s" % dataArr)
     # logging.info("labelArr:%s" % labelArr)
+    # # start = time.clock()
+    # # b, alphas = smoSimple(dataArr, labelArr, 0.6, 0.001, 100)
+    # # end = time.clock()
+    # # logging.info("b:%s" % b)
+    # # logging.info("alphas:%s" % alphas[alphas>0])
+    # # logging.info(shape(alphas[alphas>0]))
+    # # for i in range(100):
+    # #     if alphas[i] > 0.0:
+    # #         logging.info((dataArr[i], labelArr[i]))
+    # # logging.info("cost time: %f s" % (end - start))
     # start = time.clock()
-    # b, alphas = smoSimple(dataArr, labelArr, 0.6, 0.001, 100)
+    # b,alphas = smoP(dataArr, labelArr, 0.6, 0.001, 40)
     # end = time.clock()
-    # logging.info("b:%s" % b)
-    # logging.info("alphas:%s" % alphas[alphas>0])
     # logging.info(shape(alphas[alphas>0]))
     # for i in range(100):
     #     if alphas[i] > 0.0:
     #         logging.info((dataArr[i], labelArr[i]))
     # logging.info("cost time: %f s" % (end - start))
+
+    # ws=calcWs(alphas, dataArr, labelArr)
+    # logging.info(ws)
+    # dataMat = mat(dataArr)
+    # logging.info(dataMat)
+    # # r0=dataMat[0]*mat(ws)+b
+    # # logging.info(r0)
+    # # r1=dataMat[1]*mat(ws)+b
+    # # logging.info(r1)
+    # # r2=dataMat[2]*mat(ws)+b
+    # # logging.info(r2)
+    # for ii in range(100):
+    #     logging.info(dataMat[ii]*mat(ws)+b)
+    # testRbf()
     start = time.clock()
-    b,alphas = smoP(dataArr, labelArr, 0.6, 0.001, 100)
+    testDigits(('rbf', 20))
     end = time.clock()
-    logging.info(shape(alphas[alphas>0]))
-    for i in range(100):
-        if alphas[i] > 0.0:
-            logging.info((dataArr[i], labelArr[i]))
-    logging.info("cost time: %f s" % (end - start))
-    
+    print ("cost time: %f s" % (end - start))
 
 if __name__ == '__main__':
     main()
