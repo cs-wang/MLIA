@@ -1,0 +1,11 @@
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:403] INFO (1L, 9L)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([3.634009, 1.730537], -1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([3.125951, 0.293251], -1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([4.658191, 3.507396], -1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([3.223038, -0.552392], -1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([7.286357, 0.251077], 1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([6.960661, -0.245353], 1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([2.893743, -1.643468], -1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([5.286862, -2.358286], 1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:406] INFO ([6.080573, 0.418886], 1.0)
+Mon, 21 Nov 2016 21:14:44 svmMLiA.py[line:407] INFO cost time: 2.301002 s
