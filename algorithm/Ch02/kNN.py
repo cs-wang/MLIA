@@ -17,17 +17,32 @@ from os import listdir
 import logging
 
 def classify0(inX, dataSet, labels, k):
+    logging.info(inX)
+    logging.info(dataSet)
+    logging.info(labels)
+    logging.info(k)
     dataSetSize = dataSet.shape[0]
-    diffMat = tile(inX, (dataSetSize,1)) - dataSet
+    logging.info(dataSetSize)
+    tileMat = tile(inX, (dataSetSize,1))
+    logging.info(tileMat)
+    diffMat = tileMat - dataSet
+    logging.info(diffMat)
     sqDiffMat = diffMat**2
+    logging.info(sqDiffMat)
     sqDistances = sqDiffMat.sum(axis=1)
+    logging.info(sqDistances)
     distances = sqDistances**0.5
+    logging.info(distances)
     sortedDistIndicies = distances.argsort()     
+    logging.info(sortedDistIndicies)
     classCount={}          
     for i in range(k):
         voteIlabel = labels[sortedDistIndicies[i]]
+        logging.info("voteIlabel: %s" % voteIlabel)
         classCount[voteIlabel] = classCount.get(voteIlabel,0) + 1
+        logging.info("classCount: %s" % classCount)
     sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
+    logging.info("sortedClassCount: %s" % sortedClassCount)
     return sortedClassCount[0][0]
 
 def createDataSet():
@@ -73,7 +88,7 @@ def datingClassTest():
         if (classifierResult != datingLabels[i]): errorCount += 1.0
     print "the total error rate is: %f" % (errorCount/float(numTestVecs))
     print errorCount
-set_printoptions(threshold='nan')
+# set_printoptions(threshold='nan')
 def img2vector(filename):
     returnVect = zeros((1,1024))
     fr = open(filename)
@@ -86,17 +101,17 @@ def img2vector(filename):
 def handwritingClassTest():
     hwLabels = []
     trainingFileList = listdir('trainingDigits')           #load the training set
-    logging.info(trainingFileList)
+    # logging.info(trainingFileList)
     m = len(trainingFileList)
-    logging.info(m)
+    # logging.info(m)
     trainingMat = zeros((m,1024))
     for i in range(m):
         fileNameStr = trainingFileList[i]
-        logging.info(fileNameStr)
+        # logging.info(fileNameStr)
         fileStr = fileNameStr.split('.')[0]     #take off .txt
-        logging.info(fileStr)
+        # logging.info(fileStr)
         classNumStr = int(fileStr.split('_')[0])
-        logging.info(classNumStr)
+        # logging.info(classNumStr)
         hwLabels.append(classNumStr)
         trainingMat[i,:] = img2vector('trainingDigits/%s' % fileNameStr)
     testFileList = listdir('testDigits')        #iterate through the test set
@@ -124,6 +139,8 @@ def main():
                     datefmt='%a, %d %b %Y %H:%M:%S',  
                     filename='./test.log',  
                     filemode='w')  
+    # group,labels = kNN.createDataSet()
+    # print kNN.classify0([0, 0], group, labels, 3)
     # datingDataMat,datingLabels=kNN.file2matrix('datingTestSet2.txt')
     # fig = plt.figure()
     # ax = fig.add_subplot(111)
